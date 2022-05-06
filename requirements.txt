@@ -1,6 +1,6 @@
-numpy >= 1.12
-scipy >= 1.0
-matplotlib >= 2.1
+numpy >= 1.22
+scipy >= 1.5
+matplotlib >= 3.0
 scikit-image >= 0.18
 jupyter-notebook >= 4.0
 itk >= 5.0
