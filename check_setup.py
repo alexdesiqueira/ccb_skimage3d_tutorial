@@ -1,45 +1,65 @@
 import sys
 from distutils.version import LooseVersion
 
-if sys.version_info.major < 3 or sys.version_info.minor < 7:
-    print("[!] You are running an unsupported version of Python. "
-          "This tutorial requires Python version 3.7 or newer.")
+EXIT_ERROR = 1
 
-    sys.exit(1)
 
-with open("requirements.txt") as f:
-    reqs = f.readlines()
+def check_python_version():
+    if (sys.version_info.major < 3) or (sys.version_info.minor < 7):
+        print("[!] You are running an unsupported version of Python. "
+              "This tutorial requires Python version 3.7 or newer.")
 
-reqs = [(pkg, ver) for (pkg, _, ver) in
-        (req.split() for req in reqs if req.strip())]
+        sys.exit(EXIT_ERROR)
+    return None
 
-pkg_names = {
-    "jupyter-notebook": "notebook",
-    "scikit-image": "skimage",
-}
 
-for (pkg, version_wanted) in reqs:
-    module_name = pkg_names.get(pkg, pkg)
-    try:
-        m = __import__(module_name)
-        status = "✓"
-    except ImportError as e:
-        m = None
-        if (pkg != "numpy" and "numpy" in str(e)):
-            status = "?"
-            version_installed = "Needs NumPy"
-        else:
-            version_installed = "Not installed"
-            status = "X"
+def read_requirements(filename="requirements.txt"):
+    with open(filename) as file_reqs:
+        requirements = file_reqs.readlines()
 
-    if m is not None:
+    requirements = [
+        (package, version) for (package, _, version) in
+        (requirement.split()
+            for requirement in requirements if requirement.strip())
+        ]
+    return requirements
+
+
+def check_setup():
+    pkg_names = {
+        "jupyter-notebook": "notebook",
+        "scikit-image": "skimage",
+    }
+
+    check_python_version()
+    requirements = read_requirements()
+
+    for (package, version_required) in requirements:
+        module_name = pkg_names.get(package, package)
         try:
-            version_installed = m.__version__
-        except AttributeError:  # specific for ITK version
-            version_installed = m.Version.GetITKVersion()
+            module = __import__(module_name)
+            status = "✓"
+        except ImportError as e:
+            module = None
+            if (package != "numpy" and "numpy" in str(e)):
+                status = "?"
+                version_installed = "Needs NumPy"
+            else:
+                version_installed = "Not installed"
+                status = "X"
 
-        if LooseVersion(version_wanted) > LooseVersion(version_installed):
-            status = "X"
-    print("[{}] {:<10} {}".format(
-        status, pkg.ljust(16), version_installed)
+        if module is not None:
+            try:
+                version_installed = module.__version__
+            except AttributeError:  # specific for ITK version
+                version_installed = module.Version.GetITKVersion()
+
+            if LooseVersion(version_required) > LooseVersion(version_installed):
+                status = "X"
+        print("[{}] {:<10} {}".format(
+            status, package.ljust(16), version_installed)
         )
+
+
+if __name__ == '__main__':
+    check_setup()
