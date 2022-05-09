@@ -4,4 +4,4 @@ matplotlib >= 3.0
 scikit-image >= 0.18
 jupyter-notebook >= 4.0
 itk >= 5.0
-itkwidgets >= 0.18
+itkwidgets >= 0.30
