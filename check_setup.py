@@ -1,13 +1,17 @@
 import sys
-from distutils.version import LooseVersion
+from packaging.version import Version
 
 EXIT_ERROR = 1
+PYTHON_VERSION_MAJOR = 3
+PYTHON_VERSION_MINOR = 8
 
 
 def check_python_version():
-    if (sys.version_info.major < 3) or (sys.version_info.minor < 7):
-        print("[!] You are running an unsupported version of Python. "
-              "This tutorial requires Python version 3.7 or newer.")
+    if ((sys.version_info.major < PYTHON_VERSION_MAJOR) or
+        (sys.version_info.minor < PYTHON_VERSION_MINOR)):
+        print(f"[!] You are running an unsupported version of Python. "
+               "This tutorial requires Python version "
+               "{PYTHON_VERSION_MAJOR}.{PYTHON_VERSION_MINOR} or newer.")
 
         sys.exit(EXIT_ERROR)
     return None
@@ -54,7 +58,7 @@ def check_setup():
             except AttributeError:  # specific for ITK version
                 version_installed = module.Version.GetITKVersion()
 
-            if LooseVersion(version_required) > LooseVersion(version_installed):
+            if Version(version_required) > Version(version_installed):
                 status = "X"
         print("[{}] {:<10} {}".format(
             status, package.ljust(16), version_installed)
