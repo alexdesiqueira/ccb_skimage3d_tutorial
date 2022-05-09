@@ -24,6 +24,7 @@ Please ensure the requirements below are met:
 - `jupyter-notebook` >= 6.4
 - `itk` >= 5.2
 - `itkwidgets` >= 0.32
+
  For more details, see "Test your setup" below.
 
 ### If you're using conda
@@ -63,4 +64,4 @@ On my computer, the command results in:
 [✓] itkwidgets       0.32.0
 ```
 
-Please note your version numbers may differ.
+Please note that your version numbers may differ.
